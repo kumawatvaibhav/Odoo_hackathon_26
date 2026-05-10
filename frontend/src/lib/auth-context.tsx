@@ -50,7 +50,7 @@ interface ApiResponse<T> {
 }
 
 // ── API Base URL ───────────────────────────────────────────────────
-const API_BASE = typeof window !== "undefined"
+export const API_BASE = typeof window !== "undefined"
   ? (import.meta.env.VITE_API_URL as string | undefined) || "http://localhost:3000"
   : "http://localhost:3000";
 

@@ -5,9 +5,12 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { testConnection, query } from "./config/database.js";
 import authRoutes from "./modules/auth/auth.routes.js";
+import tripsRoutes from "./modules/trips/trips.routes.js";
+import packingRoutes from "./modules/packing/packing.routes.js";
+import expensesRoutes from "./modules/expenses/expenses.routes.js";
+import notesRoutes from "./modules/notes/notes.routes.js";
 import communityRoutes from "./modules/community/community.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
-import tripsRoutes from "./modules/trips/trips.routes.js";
 import { errorHandler } from "./modules/auth/auth.controller.js";
 import { apiLimiter } from "./middleware/rateLimiter.middleware.js";
 
@@ -40,9 +43,12 @@ app.use("/api", apiLimiter);                             // General rate limitin
 
 // Routes 
 app.use("/api/auth", authRoutes);
+app.use("/api/trips", tripsRoutes);
+app.use("/api/packing", packingRoutes);
+app.use("/api/expenses", expensesRoutes);
+app.use("/api/notes", notesRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/admin", adminRoutes);
-app.use("/api/trips", tripsRoutes);
 
 //  Health check
 app.get("/api/health", async (_req, res) => {
@@ -72,9 +78,9 @@ const start = async () => {
     console.log(`Health:  http://localhost:${PORT}/api/health`);
     console.log(`Cities:  http://localhost:${PORT}/api/trips/cities`);
     console.log(`Auth:    http://localhost:${PORT}/api/auth/*`);
+    console.log(`Trips:   http://localhost:${PORT}/api/trips/*`);
     console.log(`Community: http://localhost:${PORT}/api/community`);
     console.log(`Admin:   http://localhost:${PORT}/api/admin/*`);
-    console.log(`Trips:   http://localhost:${PORT}/api/trips/*`);
   });
 };
 

@@ -69,7 +69,12 @@ export const getUserTripsHandler = async (
   try {
     const ownerId = (req as any).userId as string;
     const trips = await tripsService.getUserTrips(ownerId);
-    sendSuccess(res, 200, { data: { trips, count: trips.length } });
+    
+    // Categorize for backwards compatibility with profile.tsx and notes.tsx
+    const preplanned = trips.filter(t => t.trip_status !== "completed");
+    const completed = trips.filter(t => t.trip_status === "completed");
+
+    sendSuccess(res, 200, { data: { trips, preplanned, completed, count: trips.length } });
   } catch (err) {
     next(err);
   }

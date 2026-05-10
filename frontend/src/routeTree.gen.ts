@@ -10,9 +10,13 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as PlanTripRouteImport } from './routes/plan-trip'
+import { Route as PackingRouteImport } from './routes/packing'
+import { Route as NotesRouteImport } from './routes/notes'
 import { Route as MyTripsRouteImport } from './routes/my-trips'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as ExpensesRouteImport } from './routes/expenses'
 import { Route as CommunityWriteRouteImport } from './routes/community-write'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -26,9 +30,24 @@ const SignupRoute = SignupRouteImport.update({
   path: '/signup',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const PlanTripRoute = PlanTripRouteImport.update({
   id: '/plan-trip',
   path: '/plan-trip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PackingRoute = PackingRouteImport.update({
+  id: '/packing',
+  path: '/packing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotesRoute = NotesRouteImport.update({
+  id: '/notes',
+  path: '/notes',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MyTripsRoute = MyTripsRouteImport.update({
@@ -39,6 +58,11 @@ const MyTripsRoute = MyTripsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ExpensesRoute = ExpensesRouteImport.update({
+  id: '/expenses',
+  path: '/expenses',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CommunityWriteRoute = CommunityWriteRouteImport.update({
@@ -83,9 +107,13 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/my-trips': typeof MyTripsRoute
+  '/notes': typeof NotesRoute
+  '/packing': typeof PackingRoute
   '/plan-trip': typeof PlanTripRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/itinerary/$tripId': typeof ItineraryTripIdRoute
   '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
@@ -96,9 +124,13 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/my-trips': typeof MyTripsRoute
+  '/notes': typeof NotesRoute
+  '/packing': typeof PackingRoute
   '/plan-trip': typeof PlanTripRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/itinerary/$tripId': typeof ItineraryTripIdRoute
   '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
@@ -110,9 +142,13 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
+  '/expenses': typeof ExpensesRoute
   '/login': typeof LoginRoute
   '/my-trips': typeof MyTripsRoute
+  '/notes': typeof NotesRoute
+  '/packing': typeof PackingRoute
   '/plan-trip': typeof PlanTripRoute
+  '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
   '/itinerary/$tripId': typeof ItineraryTripIdRoute
   '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
@@ -125,9 +161,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/community'
     | '/community-write'
+    | '/expenses'
     | '/login'
     | '/my-trips'
+    | '/notes'
+    | '/packing'
     | '/plan-trip'
+    | '/profile'
     | '/signup'
     | '/itinerary/$tripId'
     | '/trip/$tripId/stop/$stopId'
@@ -138,9 +178,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/community'
     | '/community-write'
+    | '/expenses'
     | '/login'
     | '/my-trips'
+    | '/notes'
+    | '/packing'
     | '/plan-trip'
+    | '/profile'
     | '/signup'
     | '/itinerary/$tripId'
     | '/trip/$tripId/stop/$stopId'
@@ -151,9 +195,13 @@ export interface FileRouteTypes {
     | '/admin'
     | '/community'
     | '/community-write'
+    | '/expenses'
     | '/login'
     | '/my-trips'
+    | '/notes'
+    | '/packing'
     | '/plan-trip'
+    | '/profile'
     | '/signup'
     | '/itinerary/$tripId'
     | '/trip/$tripId/stop/$stopId'
@@ -165,9 +213,13 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   CommunityRoute: typeof CommunityRoute
   CommunityWriteRoute: typeof CommunityWriteRoute
+  ExpensesRoute: typeof ExpensesRoute
   LoginRoute: typeof LoginRoute
   MyTripsRoute: typeof MyTripsRoute
+  NotesRoute: typeof NotesRoute
+  PackingRoute: typeof PackingRoute
   PlanTripRoute: typeof PlanTripRoute
+  ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
   ItineraryTripIdRoute: typeof ItineraryTripIdRoute
   TripTripIdStopStopIdRoute: typeof TripTripIdStopStopIdRoute
@@ -182,11 +234,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/plan-trip': {
       id: '/plan-trip'
       path: '/plan-trip'
       fullPath: '/plan-trip'
       preLoaderRoute: typeof PlanTripRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/packing': {
+      id: '/packing'
+      path: '/packing'
+      fullPath: '/packing'
+      preLoaderRoute: typeof PackingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notes': {
+      id: '/notes'
+      path: '/notes'
+      fullPath: '/notes'
+      preLoaderRoute: typeof NotesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/my-trips': {
@@ -201,6 +274,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/expenses': {
+      id: '/expenses'
+      path: '/expenses'
+      fullPath: '/expenses'
+      preLoaderRoute: typeof ExpensesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/community-write': {
@@ -261,9 +341,13 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   CommunityRoute: CommunityRoute,
   CommunityWriteRoute: CommunityWriteRoute,
+  ExpensesRoute: ExpensesRoute,
   LoginRoute: LoginRoute,
   MyTripsRoute: MyTripsRoute,
+  NotesRoute: NotesRoute,
+  PackingRoute: PackingRoute,
   PlanTripRoute: PlanTripRoute,
+  ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
   ItineraryTripIdRoute: ItineraryTripIdRoute,
   TripTripIdStopStopIdRoute: TripTripIdStopStopIdRoute,

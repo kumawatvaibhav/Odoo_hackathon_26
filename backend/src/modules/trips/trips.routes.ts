@@ -26,6 +26,7 @@ router.get("/cities", getCitiesHandler);
 // ─── Trips (protected) ──────────────────────────────────────────────────────
 router.post("/", requireAuth, createTripHandler);
 router.get("/", requireAuth, getUserTripsHandler);
+router.get("/my", requireAuth, getUserTripsHandler);
 router.get("/:tripId", requireAuth, getTripHandler);
 
 // ─── Trip Stops / Itinerary Sections ────────────────────────────────────────

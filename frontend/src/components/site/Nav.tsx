@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { Menu, X, LogOut, User as UserIcon, ChevronDown } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, ChevronDown, Package, Receipt, StickyNote } from "lucide-react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "@/lib/auth-context";
@@ -116,13 +116,39 @@ export function Nav() {
 
                     {/* Menu items */}
                     <div className="py-1">
-                      <button
-                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal/80 hover:bg-muted/60 transition-colors cursor-pointer"
+                      <Link
+                        to="/profile"
                         onClick={() => setUserMenuOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal/80 hover:bg-muted/60 transition-colors cursor-pointer"
                       >
                         <UserIcon size={15} />
                         Profile
-                      </button>
+                      </Link>
+                      <Link
+                        to="/packing"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal/80 hover:bg-muted/60 transition-colors cursor-pointer"
+                      >
+                        <Package size={15} />
+                        Packing Checklist
+                      </Link>
+                      <Link
+                        to="/expenses"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal/80 hover:bg-muted/60 transition-colors cursor-pointer"
+                      >
+                        <Receipt size={15} />
+                        Expenses & Invoice
+                      </Link>
+                      <Link
+                        to="/notes"
+                        onClick={() => setUserMenuOpen(false)}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-charcoal/80 hover:bg-muted/60 transition-colors cursor-pointer"
+                      >
+                        <StickyNote size={15} />
+                        Trip Notes
+                      </Link>
+                      <div className="border-t border-border/60 my-1" />
                       <button
                         onClick={async () => {
                           setUserMenuOpen(false);
@@ -197,7 +223,7 @@ export function Nav() {
 
               {user ? (
                 <>
-                  {/* Mobile: user info + signout */}
+                  {/* Mobile: user info + links + signout */}
                   <div className="mt-2 pt-3 border-t border-border/60">
                     <div className="flex items-center gap-3 mb-3">
                       <span className="grid place-items-center w-9 h-9 rounded-full bg-gradient-primary text-primary-foreground text-sm font-bold">
@@ -210,12 +236,32 @@ export function Nav() {
                         <p className="text-xs text-charcoal/50">{user.email}</p>
                       </div>
                     </div>
+                    <Link to="/profile" onClick={() => setOpen(false)}>
+                      <motion.span className="flex items-center gap-3 py-2 text-charcoal/80" whileHover={{ color: "var(--color-teal)" }}>
+                        <UserIcon size={15} /> Profile
+                      </motion.span>
+                    </Link>
+                    <Link to="/packing" onClick={() => setOpen(false)}>
+                      <motion.span className="flex items-center gap-3 py-2 text-charcoal/80" whileHover={{ color: "var(--color-teal)" }}>
+                        <Package size={15} /> Packing Checklist
+                      </motion.span>
+                    </Link>
+                    <Link to="/expenses" onClick={() => setOpen(false)}>
+                      <motion.span className="flex items-center gap-3 py-2 text-charcoal/80" whileHover={{ color: "var(--color-teal)" }}>
+                        <Receipt size={15} /> Expenses & Invoice
+                      </motion.span>
+                    </Link>
+                    <Link to="/notes" onClick={() => setOpen(false)}>
+                      <motion.span className="flex items-center gap-3 py-2 text-charcoal/80" whileHover={{ color: "var(--color-teal)" }}>
+                        <StickyNote size={15} /> Trip Notes
+                      </motion.span>
+                    </Link>
                     <motion.button
                       onClick={async () => {
                         setOpen(false);
                         await signout();
                       }}
-                      className="w-full mt-1 text-center rounded-xl border border-destructive/30 text-destructive px-4 py-2.5 font-medium"
+                      className="w-full mt-3 text-center rounded-xl border border-destructive/30 text-destructive px-4 py-2.5 font-medium"
                       whileHover={{ y: -2, backgroundColor: "rgba(220,38,38,0.05)" }}
                       whileTap={{ scale: 0.98 }}
                     >
