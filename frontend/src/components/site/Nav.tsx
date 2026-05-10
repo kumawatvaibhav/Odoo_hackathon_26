@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { Menu, X } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
 const links = [
+  { label: "Activities", href: "/activity-search" },
   { label: "Features", href: "#features" },
   { label: "Demo", href: "#demo" },
   { label: "Stories", href: "#stories" },
@@ -20,10 +22,17 @@ export function Nav() {
   }, []);
 
   return (
-    <header
-      className={`fixed top-0 inset-x-0 z-50 transition-all duration-300 ${
+    <motion.header
+      className={`fixed top-0 inset-x-0 z-50 ${
         scrolled ? "glass border-b border-border/60" : "bg-transparent"
       }`}
+      initial={false}
+      animate={{
+        boxShadow: scrolled
+          ? "0 16px 40px -24px color-mix(in oklab, var(--charcoal) 30%, transparent)"
+          : "none",
+      }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
     >
       <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
         <a href="#top" className="flex items-center gap-2.5 group">
@@ -37,57 +46,77 @@ export function Nav() {
 
         <nav className="hidden md:flex items-center gap-8 text-sm">
           {links.map((l) => (
-            <a
+            <motion.a
               key={l.href}
               href={l.href}
-              className="text-charcoal/70 hover:text-teal transition-colors"
+              className="text-charcoal/70"
+              whileHover={{ color: "var(--color-teal)" }}
             >
               {l.label}
-            </a>
+            </motion.a>
           ))}
-          <a href="#signup" className="text-charcoal/70 hover:text-teal transition-colors">
-            Sign in
-          </a>
-          <a
+          <motion.a
             href="#signup"
-            className="inline-flex items-center rounded-xl bg-gradient-primary text-primary-foreground px-4 py-2 font-medium shadow-card hover:shadow-glow hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="text-charcoal/70"
+            whileHover={{ color: "var(--color-teal)" }}
+          >
+            Sign in
+          </motion.a>
+          <motion.a
+            href="#signup"
+            className="inline-flex items-center rounded-xl bg-gradient-primary text-primary-foreground px-4 py-2 font-medium shadow-card"
+            whileHover={{ y: -2, boxShadow: "0 16px 36px -20px color-mix(in oklab, var(--primary) 40%, transparent)" }}
+            whileTap={{ scale: 0.98 }}
           >
             Start free
-          </a>
+          </motion.a>
         </nav>
 
-        <button
+        <motion.button
           aria-label="Menu"
-          className="md:hidden p-2 rounded-lg hover:bg-muted"
+          className="md:hidden p-2 rounded-lg"
           onClick={() => setOpen((o) => !o)}
+          whileHover={{ backgroundColor: "var(--color-muted)" }}
+          whileTap={{ scale: 0.96 }}
         >
           {open ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        </motion.button>
       </div>
 
-      {open && (
-        <div className="md:hidden glass border-t border-border/60 animate-fade-up">
-          <div className="px-6 py-4 flex flex-col gap-3">
-            {links.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            className="md:hidden glass border-t border-border/60"
+            initial={{ opacity: 0, y: -12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -12 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+          >
+            <div className="px-6 py-4 flex flex-col gap-3">
+              {links.map((l) => (
+                <motion.a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  className="py-2 text-charcoal/80"
+                  whileHover={{ color: "var(--color-teal)" }}
+                >
+                  {l.label}
+                </motion.a>
+              ))}
+              <motion.a
+                href="#signup"
                 onClick={() => setOpen(false)}
-                className="py-2 text-charcoal/80 hover:text-teal"
+                className="mt-2 text-center rounded-xl bg-gradient-primary text-primary-foreground px-4 py-2.5 font-medium"
+                whileHover={{ y: -2, boxShadow: "0 16px 36px -20px color-mix(in oklab, var(--primary) 40%, transparent)" }}
+                whileTap={{ scale: 0.98 }}
               >
-                {l.label}
-              </a>
-            ))}
-            <a
-              href="#signup"
-              onClick={() => setOpen(false)}
-              className="mt-2 text-center rounded-xl bg-gradient-primary text-primary-foreground px-4 py-2.5 font-medium"
-            >
-              Start free
-            </a>
-          </div>
-        </div>
-      )}
-    </header>
+                Start free
+              </motion.a>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }
