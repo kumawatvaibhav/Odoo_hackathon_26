@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Sparkles } from "lucide-react";
+import { motion } from "framer-motion";
 
 const DESTINATIONS = ["Kyoto", "Lisbon", "Queenstown", "Hanoi", "Copenhagen", "Cartagena"];
 const TARGET = 48290;
@@ -78,21 +79,39 @@ export function Community() {
           <h2 className="mt-3 font-display font-bold text-charcoal text-3xl md:text-5xl tracking-tight">
             Trips planned this month.
           </h2>
-          <p className="mt-6 font-display font-bold text-charcoal text-7xl md:text-8xl tracking-tighter tabular-nums bg-gradient-primary bg-clip-text text-transparent">
+          <motion.p
+            className="mt-6 font-display font-bold text-charcoal text-7xl md:text-8xl tracking-tighter tabular-nums"
+            initial={{ opacity: 0, y: 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.6 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             {val.toLocaleString()}
-          </p>
-          <p className="mt-2 text-charcoal/60">active loops</p>
+          </motion.p>
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-charcoal/60">
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card px-3 py-1.5">
+              <Sparkles size={12} className="text-teal" /> Active loops
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-card px-3 py-1.5">
+              92% planned with friends
+            </span>
+          </div>
 
           <div className="mt-10">
             <p className="text-sm font-semibold text-charcoal mb-3">Popular destinations</p>
             <div className="flex flex-wrap gap-2">
               {DESTINATIONS.map((d) => (
-                <span
+                <motion.span
                   key={d}
-                  className="rounded-full bg-muted px-4 py-2 text-sm text-charcoal hover:bg-teal/10 hover:text-teal hover:scale-105 transition-all cursor-default"
+                  className="rounded-full bg-muted px-4 py-2 text-sm text-charcoal cursor-default"
+                  whileHover={{
+                    scale: 1.05,
+                    backgroundColor: "rgba(114, 216, 205, 0.15)",
+                    color: "var(--color-teal)",
+                  }}
                 >
                   {d}
-                </span>
+                </motion.span>
               ))}
             </div>
           </div>
@@ -106,14 +125,23 @@ export function Community() {
             Travelers love the flow.
           </h2>
 
-          <div className="mt-8 rounded-3xl bg-gradient-dark text-cream p-8 md:p-10 border border-teal/30 shadow-elegant relative overflow-hidden min-h-[280px]">
+          <motion.div
+            className="mt-8 rounded-3xl bg-gradient-dark text-cream p-8 md:p-10 border border-teal/30 shadow-elegant relative overflow-hidden min-h-[280px]"
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.5 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+          >
             <span className="font-serif text-7xl leading-none text-teal/60">“</span>
-            <p
+            <motion.p
               key={idx}
-              className="-mt-8 font-serif text-xl md:text-2xl leading-relaxed text-cream animate-fade-up"
+              className="-mt-8 font-serif text-xl md:text-2xl leading-relaxed text-cream"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
             >
               {t.quote}
-            </p>
+            </motion.p>
             <div className="mt-6 flex items-end justify-between">
               <div>
                 <p className="font-semibold text-cream">{t.name}</p>
@@ -146,7 +174,7 @@ export function Community() {
                 </button>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

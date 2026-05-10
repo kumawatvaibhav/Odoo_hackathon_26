@@ -6,9 +6,8 @@ import { useAuth } from "@/lib/auth-context";
 
 const links = [
   { label: "Activities", href: "/activity-search" },
-  { label: "Features", href: "/#features" },
-  { label: "Demo", href: "/#demo" },
-  { label: "Stories", href: "/#stories" },
+  { label: "Community", href: "#stories" },
+  { label: "Try it", href: "#demo" },
 ];
 
 export function Nav() {

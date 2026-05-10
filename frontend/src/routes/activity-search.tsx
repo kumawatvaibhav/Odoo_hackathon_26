@@ -1,11 +1,17 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
 import { Search, MapPin, Sparkles } from "lucide-react";
 import { Nav } from "@/components/site/Nav";
 import { Footer } from "@/components/site/Footer";
 import { PlanFab } from "@/components/site/PlanFab";
+import banner from "@/assets/hero-banner.jpg";
+import {
+  fetchPexelsPhotos,
+  fetchPexelsVideos,
+  pickPexelsVideoFile,
+} from "@/lib/pexels";
 
 const activities = [
   {
@@ -14,9 +20,9 @@ const activities = [
     duration: "2h 30m",
     price: "INR 1,450",
     rating: "4.8",
+    query: "Varanasi ghats sunrise boat",
     detail:
       "Float past the riverfront temples with a local guide and a chai tasting on board.",
-    art: <GhatCruise />,
   },
   {
     name: "Jaipur Heritage Bazaar Walk",
@@ -24,9 +30,9 @@ const activities = [
     duration: "3h",
     price: "INR 1,200",
     rating: "4.7",
+    query: "Jaipur bazaar streets",
     detail:
       "Textiles, gemstone ateliers, and a curated route through the Pink City alleys.",
-    art: <BazaarWalk />,
   },
   {
     name: "Srinagar Houseboat Atelier",
@@ -34,9 +40,9 @@ const activities = [
     duration: "4h",
     price: "INR 2,600",
     rating: "4.9",
+    query: "Srinagar houseboat lake",
     detail:
       "Meet artisan families crafting walnut woodwork with a lakeside lunch.",
-    art: <Houseboat />,
   },
   {
     name: "Lisbon Miradouros Circuit",
@@ -44,9 +50,9 @@ const activities = [
     duration: "3h 15m",
     price: "EUR 38",
     rating: "4.6",
+    query: "Lisbon miradouro viewpoint",
     detail:
       "Golden-hour viewpoints with a local photographer and tram ride tickets.",
-    art: <LisbonView />,
   },
   {
     name: "Kyoto Lanterns & Tea",
@@ -54,9 +60,9 @@ const activities = [
     duration: "2h",
     price: "JPY 5,400",
     rating: "4.9",
+    query: "Kyoto lantern street",
     detail:
       "A gentle dusk walk through Gion paired with a seasonal tea ceremony.",
-    art: <KyotoLantern />,
   },
   {
     name: "Marrakesh Rooftop Tasting",
@@ -64,9 +70,9 @@ const activities = [
     duration: "2h 45m",
     price: "MAD 420",
     rating: "4.7",
+    query: "Marrakesh rooftop sunset",
     detail:
       "Mint tea rituals and panoramic medina views with a chef host.",
-    art: <MarrakeshRooftop />,
   },
 ];
 
@@ -95,6 +101,27 @@ export const Route = createFileRoute("/activity-search")({
 function ActivitySearch() {
   const orbitOne = useRef<HTMLDivElement | null>(null);
   const orbitTwo = useRef<HTMLDivElement | null>(null);
+  const loadMoreRef = useRef<HTMLDivElement | null>(null);
+  const [media, setMedia] = useState<
+    Record<string, { type: "image" | "video"; src: string; alt: string }>
+  >({});
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
+  const [visibleCount, setVisibleCount] = useState(3);
+  const filteredActivities = useMemo(() => {
+    const term = debouncedQuery.trim().toLowerCase();
+    if (!term) return activities;
+    return activities.filter((activity) =>
+      [activity.name, activity.city, activity.detail]
+        .join(" ")
+        .toLowerCase()
+        .includes(term)
+    );
+  }, [debouncedQuery]);
+  const visibleActivities = useMemo(
+    () => filteredActivities.slice(0, visibleCount),
+    [filteredActivities, visibleCount]
+  );
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -121,6 +148,82 @@ function ActivitySearch() {
     });
 
     return () => ctx.revert();
+  }, []);
+
+  useEffect(() => {
+    const target = loadMoreRef.current;
+    if (!target) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setVisibleCount((count) =>
+              Math.min(count + 3, filteredActivities.length)
+            );
+          }
+        });
+      },
+      { rootMargin: "120px" }
+    );
+
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, [filteredActivities.length]);
+
+  useEffect(() => {
+    const handle = window.setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    return () => window.clearTimeout(handle);
+  }, [query]);
+
+  useEffect(() => {
+    setVisibleCount(Math.min(3, filteredActivities.length));
+  }, [debouncedQuery, filteredActivities.length]);
+
+  useEffect(() => {
+    let active = true;
+
+    const loadMedia = async () => {
+      const [videoResult] = await fetchPexelsVideos(
+        "Varanasi river sunrise",
+        1
+      );
+      const videoSrc = videoResult ? pickPexelsVideoFile(videoResult) : null;
+
+      const photos = await Promise.all(
+        activities.map(async (activity) => {
+          const [photo] = await fetchPexelsPhotos(activity.query, 1);
+          return {
+            name: activity.name,
+            src: photo?.src?.large2x || photo?.src?.landscape || banner,
+            alt: photo?.alt || `${activity.name} in ${activity.city}`,
+          };
+        })
+      );
+
+      if (!active) return;
+      const next: Record<
+        string,
+        { type: "image" | "video"; src: string; alt: string }
+      > = {};
+      photos.forEach((item, index) => {
+        if (index === 0 && videoSrc) {
+          next[item.name] = { type: "video", src: videoSrc, alt: item.alt };
+        } else {
+          next[item.name] = { type: "image", src: item.src, alt: item.alt };
+        }
+      });
+      setMedia(next);
+    };
+
+    loadMedia();
+
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
@@ -172,6 +275,8 @@ function ActivitySearch() {
                 <Search size={18} className="text-teal" />
                 <input
                   placeholder="Search city or experience"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
                   className="w-full bg-transparent text-sm sm:text-base outline-none text-charcoal placeholder:text-charcoal/40"
                 />
               </label>
@@ -202,25 +307,46 @@ function ActivitySearch() {
           <div className="mx-auto max-w-7xl px-4 sm:px-6">
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2 text-sm text-charcoal/60">
-                <MapPin size={16} className="text-teal" /> Showing 6 highlights
+                <MapPin size={16} className="text-teal" />
+                Showing {Math.min(visibleCount, filteredActivities.length)} of {filteredActivities.length}
               </div>
               <span className="text-xs uppercase tracking-[0.2em] text-charcoal/50">
-                Scroll for more
+                Loading as you scroll
               </span>
             </div>
 
-            <div className="mt-6 flex flex-col gap-4 md:flex-row md:overflow-x-auto md:pb-4 md:snap-x md:snap-mandatory">
-              {activities.map((activity) => (
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {visibleActivities.map((activity) => (
                 <motion.article
                   key={activity.name}
-                  className="md:min-w-[360px] md:max-w-[360px] flex-1 rounded-2xl border border-border/70 bg-card shadow-card overflow-hidden md:snap-start"
+                  className="rounded-2xl border border-border/70 bg-card shadow-card overflow-hidden"
                   initial={{ opacity: 0, scale: 0.95 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true, amount: 0.4 }}
                   transition={{ duration: 0.4, ease: "easeOut" }}
                   whileHover={{ y: -8, boxShadow: "0 18px 40px -18px color-mix(in oklab, var(--charcoal) 28%, transparent)" }}
                 >
-                  <div className="h-44 w-full">{activity.art}</div>
+                  <div className="h-44 w-full overflow-hidden">
+                    {media[activity.name]?.type === "video" ? (
+                      <video
+                        src={media[activity.name].src}
+                        className="h-full w-full object-cover"
+                        autoPlay
+                        muted
+                        loop
+                        playsInline
+                        preload="metadata"
+                        poster={banner}
+                      />
+                    ) : (
+                      <img
+                        src={media[activity.name]?.src || banner}
+                        alt={media[activity.name]?.alt || activity.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    )}
+                  </div>
                   <div className="p-5">
                     <div className="flex items-center justify-between gap-3">
                       <div>
@@ -259,87 +385,14 @@ function ActivitySearch() {
                 </motion.article>
               ))}
             </div>
+            {visibleCount < filteredActivities.length && (
+              <div ref={loadMoreRef} className="h-10" aria-hidden="true" />
+            )}
           </div>
         </section>
       </main>
       <Footer />
       <PlanFab />
     </div>
-  );
-}
-
-function GhatCruise() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#f4e8da" />
-      <rect y="180" width="600" height="140" fill="#5f8c8a" />
-      <path d="M0 180 L120 120 L240 180 L360 130 L480 180 L600 140 V320 H0 Z" fill="#3f6a68" />
-      <rect x="60" y="100" width="220" height="70" rx="12" fill="#c79a70" />
-      <rect x="310" y="90" width="240" height="90" rx="14" fill="#a86d4a" />
-      <path d="M200 220 C280 200, 360 240, 440 220" stroke="#d8f0ed" strokeWidth="8" opacity="0.6" fill="none" />
-    </svg>
-  );
-}
-
-function BazaarWalk() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#f9ead6" />
-      <rect y="170" width="600" height="150" fill="#e3b58d" />
-      <rect x="40" y="80" width="200" height="90" rx="12" fill="#c2704a" />
-      <rect x="260" y="70" width="140" height="100" rx="12" fill="#d38c61" />
-      <rect x="420" y="90" width="140" height="80" rx="12" fill="#a75d3e" />
-      <circle cx="520" cy="50" r="32" fill="#f0c27b" />
-    </svg>
-  );
-}
-
-function Houseboat() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#e8f0f1" />
-      <rect y="170" width="600" height="150" fill="#4e7b84" />
-      <path d="M80 200 L520 200 L460 260 L140 260 Z" fill="#c2d1d4" />
-      <rect x="150" y="120" width="300" height="80" rx="14" fill="#8b6b52" />
-      <rect x="210" y="140" width="180" height="50" rx="10" fill="#d9c2a6" />
-    </svg>
-  );
-}
-
-function LisbonView() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#dfe9f7" />
-      <rect y="180" width="600" height="140" fill="#caa27e" />
-      <rect x="60" y="90" width="180" height="90" rx="12" fill="#b86b4d" />
-      <rect x="260" y="70" width="160" height="110" rx="12" fill="#e4c09d" />
-      <rect x="440" y="100" width="120" height="80" rx="12" fill="#a85c45" />
-      <circle cx="470" cy="50" r="30" fill="#f0c27b" />
-    </svg>
-  );
-}
-
-function KyotoLantern() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#e6efe6" />
-      <rect y="190" width="600" height="130" fill="#7c9b86" />
-      <rect x="80" y="100" width="200" height="90" rx="12" fill="#4c5e53" />
-      <rect x="320" y="90" width="200" height="100" rx="12" fill="#6b7c70" />
-      <circle cx="440" cy="130" r="24" fill="#f1b474" />
-      <circle cx="480" cy="130" r="16" fill="#f1b474" />
-    </svg>
-  );
-}
-
-function MarrakeshRooftop() {
-  return (
-    <svg viewBox="0 0 600 320" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <rect width="600" height="320" fill="#f6e6d4" />
-      <rect y="180" width="600" height="140" fill="#c5845b" />
-      <rect x="80" y="100" width="200" height="80" rx="12" fill="#9b563a" />
-      <rect x="300" y="80" width="220" height="100" rx="12" fill="#d2a07a" />
-      <circle cx="470" cy="50" r="30" fill="#f0c27b" />
-    </svg>
   );
 }
