@@ -5,6 +5,8 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import { testConnection, query } from "./config/database.js";
 import authRoutes from "./modules/auth/auth.routes.js";
+import communityRoutes from "./modules/community/community.routes.js";
+import adminRoutes from "./modules/admin/admin.routes.js";
 import { errorHandler } from "./modules/auth/auth.controller.js";
 import { apiLimiter } from "./middleware/rateLimiter.middleware.js";
 
@@ -37,6 +39,8 @@ app.use("/api", apiLimiter);                             // General rate limitin
 
 // Routes 
 app.use("/api/auth", authRoutes);
+app.use("/api/community", communityRoutes);
+app.use("/api/admin", adminRoutes);
 
 //  Health check
 app.get("/api/health", async (_req, res) => {
@@ -76,6 +80,8 @@ const start = async () => {
     console.log(`Health:  http://localhost:${PORT}/api/health`);
     console.log(`Cities:  http://localhost:${PORT}/api/cities`);
     console.log(`Auth:    http://localhost:${PORT}/api/auth/*`);
+    console.log(`Community: http://localhost:${PORT}/api/community`);
+    console.log(`Admin:   http://localhost:${PORT}/api/admin/*`);
   });
 };
 

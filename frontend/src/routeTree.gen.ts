@@ -11,6 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as CommunityWriteRouteImport } from './routes/community-write'
+import { Route as CommunityRouteImport } from './routes/community'
+import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitySearchRouteImport } from './routes/activity-search'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -22,6 +25,21 @@ const SignupRoute = SignupRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityWriteRoute = CommunityWriteRouteImport.update({
+  id: '/community-write',
+  path: '/community-write',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CommunityRoute = CommunityRouteImport.update({
+  id: '/community',
+  path: '/community',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminRoute = AdminRouteImport.update({
+  id: '/admin',
+  path: '/admin',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ActivitySearchRoute = ActivitySearchRouteImport.update({
@@ -38,12 +56,18 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/activity-search': typeof ActivitySearchRoute
+  '/admin': typeof AdminRoute
+  '/community': typeof CommunityRoute
+  '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/activity-search': typeof ActivitySearchRoute
+  '/admin': typeof AdminRoute
+  '/community': typeof CommunityRoute
+  '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
@@ -51,20 +75,48 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/activity-search': typeof ActivitySearchRoute
+  '/admin': typeof AdminRoute
+  '/community': typeof CommunityRoute
+  '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/activity-search' | '/login' | '/signup'
+  fullPaths:
+    | '/'
+    | '/activity-search'
+    | '/admin'
+    | '/community'
+    | '/community-write'
+    | '/login'
+    | '/signup'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/activity-search' | '/login' | '/signup'
-  id: '__root__' | '/' | '/activity-search' | '/login' | '/signup'
+  to:
+    | '/'
+    | '/activity-search'
+    | '/admin'
+    | '/community'
+    | '/community-write'
+    | '/login'
+    | '/signup'
+  id:
+    | '__root__'
+    | '/'
+    | '/activity-search'
+    | '/admin'
+    | '/community'
+    | '/community-write'
+    | '/login'
+    | '/signup'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   ActivitySearchRoute: typeof ActivitySearchRoute
+  AdminRoute: typeof AdminRoute
+  CommunityRoute: typeof CommunityRoute
+  CommunityWriteRoute: typeof CommunityWriteRoute
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
 }
@@ -83,6 +135,27 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community-write': {
+      id: '/community-write'
+      path: '/community-write'
+      fullPath: '/community-write'
+      preLoaderRoute: typeof CommunityWriteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/community': {
+      id: '/community'
+      path: '/community'
+      fullPath: '/community'
+      preLoaderRoute: typeof CommunityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin': {
+      id: '/admin'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/activity-search': {
@@ -105,6 +178,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   ActivitySearchRoute: ActivitySearchRoute,
+  AdminRoute: AdminRoute,
+  CommunityRoute: CommunityRoute,
+  CommunityWriteRoute: CommunityWriteRoute,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
 }

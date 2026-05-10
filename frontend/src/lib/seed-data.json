@@ -1,0 +1,92 @@
+{
+  "activities": [
+    {
+      "name": "Sunrise Varanasi Ghats Cruise",
+      "city": "Varanasi, India",
+      "duration": "2h 30m",
+      "price": "INR 1,450",
+      "rating": "4.8",
+      "query": "Varanasi ghats sunrise boat",
+      "detail": "Float past the riverfront temples with a local guide and a chai tasting on board.",
+      "category": "sightseeing",
+      "estimated_cost": 1450,
+      "currency": "INR",
+      "duration_minutes": 150
+    },
+    {
+      "name": "Jaipur Heritage Bazaar Walk",
+      "city": "Jaipur, India",
+      "duration": "3h",
+      "price": "INR 1,200",
+      "rating": "4.7",
+      "query": "Jaipur bazaar streets",
+      "detail": "Textiles, gemstone ateliers, and a curated route through the Pink City alleys.",
+      "category": "culture",
+      "estimated_cost": 1200,
+      "currency": "INR",
+      "duration_minutes": 180
+    },
+    {
+      "name": "Srinagar Houseboat Atelier",
+      "city": "Srinagar, India",
+      "duration": "4h",
+      "price": "INR 2,600",
+      "rating": "4.9",
+      "query": "Srinagar houseboat lake",
+      "detail": "Meet artisan families crafting walnut woodwork with a lakeside lunch.",
+      "category": "culture",
+      "estimated_cost": 2600,
+      "currency": "INR",
+      "duration_minutes": 240
+    },
+    {
+      "name": "Lisbon Miradouros Circuit",
+      "city": "Lisbon, Portugal",
+      "duration": "3h 15m",
+      "price": "EUR 38",
+      "rating": "4.6",
+      "query": "Lisbon miradouro viewpoint",
+      "detail": "Golden-hour viewpoints with a local photographer and tram ride tickets.",
+      "category": "sightseeing",
+      "estimated_cost": 38,
+      "currency": "EUR",
+      "duration_minutes": 195
+    },
+    {
+      "name": "Kyoto Lanterns & Tea",
+      "city": "Kyoto, Japan",
+      "duration": "2h",
+      "price": "JPY 5,400",
+      "rating": "4.9",
+      "query": "Kyoto lantern street",
+      "detail": "A gentle dusk walk through Gion paired with a seasonal tea ceremony.",
+      "category": "culture",
+      "estimated_cost": 5400,
+      "currency": "JPY",
+      "duration_minutes": 120
+    },
+    {
+      "name": "Marrakesh Rooftop Tasting",
+      "city": "Marrakesh, Morocco",
+      "duration": "2h 45m",
+      "price": "MAD 420",
+      "rating": "4.7",
+      "query": "Marrakesh rooftop sunset",
+      "detail": "Mint tea rituals and panoramic medina views with a chef host.",
+      "category": "food_and_drink",
+      "estimated_cost": 420,
+      "currency": "MAD",
+      "duration_minutes": 165
+    }
+  ],
+  "cities": [
+    { "name": "Varanasi", "country": "India", "country_code": "IN", "latitude": 25.3176, "longitude": 83.0068, "popularity_score": 85 },
+    { "name": "Jaipur", "country": "India", "country_code": "IN", "latitude": 26.9124, "longitude": 75.7873, "popularity_score": 90 },
+    { "name": "Srinagar", "country": "India", "country_code": "IN", "latitude": 34.0837, "longitude": 74.7973, "popularity_score": 80 },
+    { "name": "Lisbon", "country": "Portugal", "country_code": "PT", "latitude": 38.7223, "longitude": -9.1393, "popularity_score": 92 },
+    { "name": "Kyoto", "country": "Japan", "country_code": "JP", "latitude": 35.0116, "longitude": 135.7681, "popularity_score": 95 },
+    { "name": "Marrakesh", "country": "Morocco", "country_code": "MA", "latitude": 31.6295, "longitude": -7.9811, "popularity_score": 88 },
+    { "name": "Hanoi", "country": "Vietnam", "country_code": "VN", "latitude": 21.0285, "longitude": 105.8542, "popularity_score": 82 },
+    { "name": "Reykjavik", "country": "Iceland", "country_code": "IS", "latitude": 64.1466, "longitude": -21.9426, "popularity_score": 78 }
+  ]
+}

@@ -12,69 +12,71 @@ import {
   fetchPexelsVideos,
   pickPexelsVideoFile,
 } from "@/lib/pexels";
+import seedData from "@/lib/seed-data.json";
 
-const activities = [
-  {
-    name: "Sunrise Varanasi Ghats Cruise",
-    city: "Varanasi, India",
-    duration: "2h 30m",
-    price: "INR 1,450",
-    rating: "4.8",
-    query: "Varanasi ghats sunrise boat",
-    detail:
-      "Float past the riverfront temples with a local guide and a chai tasting on board.",
-  },
-  {
-    name: "Jaipur Heritage Bazaar Walk",
-    city: "Jaipur, India",
-    duration: "3h",
-    price: "INR 1,200",
-    rating: "4.7",
-    query: "Jaipur bazaar streets",
-    detail:
-      "Textiles, gemstone ateliers, and a curated route through the Pink City alleys.",
-  },
-  {
-    name: "Srinagar Houseboat Atelier",
-    city: "Srinagar, India",
-    duration: "4h",
-    price: "INR 2,600",
-    rating: "4.9",
-    query: "Srinagar houseboat lake",
-    detail:
-      "Meet artisan families crafting walnut woodwork with a lakeside lunch.",
-  },
-  {
-    name: "Lisbon Miradouros Circuit",
-    city: "Lisbon, Portugal",
-    duration: "3h 15m",
-    price: "EUR 38",
-    rating: "4.6",
-    query: "Lisbon miradouro viewpoint",
-    detail:
-      "Golden-hour viewpoints with a local photographer and tram ride tickets.",
-  },
-  {
-    name: "Kyoto Lanterns & Tea",
-    city: "Kyoto, Japan",
-    duration: "2h",
-    price: "JPY 5,400",
-    rating: "4.9",
-    query: "Kyoto lantern street",
-    detail:
-      "A gentle dusk walk through Gion paired with a seasonal tea ceremony.",
-  },
-  {
-    name: "Marrakesh Rooftop Tasting",
-    city: "Marrakesh, Morocco",
-    duration: "2h 45m",
-    price: "MAD 420",
-    rating: "4.7",
-    query: "Marrakesh rooftop sunset",
-    detail:
-      "Mint tea rituals and panoramic medina views with a chef host.",
-  },
-];
+const API_BASE =
+  typeof window !== "undefined"
+    ? (import.meta.env.VITE_API_URL as string | undefined) || "http://localhost:3000"
+    : "http://localhost:3000";
+
+// Shape used for display
+type ActivityItem = {
+  name: string;
+  city: string;
+  duration: string;
+  price: string;
+  rating: string;
+  query: string;
+  detail: string;
+};
+
+// Fallback data from JSON
+const FALLBACK_ACTIVITIES: ActivityItem[] = seedData.activities.map((a) => ({
+  name: a.name,
+  city: a.city,
+  duration: a.duration,
+  price: a.price,
+  rating: a.rating,
+  query: a.query,
+  detail: a.detail,
+}));
+
+function formatDuration(mins: number | null): string {
+  if (!mins) return "";
+  const h = Math.floor(mins / 60);
+  const m = mins % 60;
+  return h > 0 ? (m > 0 ? `${h}h ${m}m` : `${h}h`) : `${m}m`;
+}
+
+function useActivities() {
+  const [activities, setActivities] = useState<ActivityItem[]>(FALLBACK_ACTIVITIES);
+
+  useEffect(() => {
+    let active = true;
+    (async () => {
+      try {
+        const r = await fetch(`${API_BASE}/api/admin/activities`);
+        const j = await r.json();
+        if (j.success && j.data?.activities?.length > 0 && active) {
+          setActivities(
+            j.data.activities.map((a: any) => ({
+              name: a.name,
+              city: a.city_name ? `${a.city_name}` : "",
+              duration: formatDuration(a.duration_minutes),
+              price: a.estimated_cost ? `${a.currency || "USD"} ${Number(a.estimated_cost).toLocaleString()}` : "",
+              rating: a.rating ? Number(a.rating).toFixed(1) : "0.0",
+              query: a.name,
+              detail: a.description || "",
+            }))
+          );
+        }
+      } catch { /* use fallback */ }
+    })();
+    return () => { active = false; };
+  }, []);
+
+  return activities;
+}
 
 export const Route = createFileRoute("/activity-search")({
   head: () => ({
@@ -99,6 +101,7 @@ export const Route = createFileRoute("/activity-search")({
 });
 
 function ActivitySearch() {
+  const activities = useActivities();
   const orbitOne = useRef<HTMLDivElement | null>(null);
   const orbitTwo = useRef<HTMLDivElement | null>(null);
   const loadMoreRef = useRef<HTMLDivElement | null>(null);
@@ -117,7 +120,7 @@ function ActivitySearch() {
         .toLowerCase()
         .includes(term)
     );
-  }, [debouncedQuery]);
+  }, [debouncedQuery, activities]);
   const visibleActivities = useMemo(
     () => filteredActivities.slice(0, visibleCount),
     [filteredActivities, visibleCount]
