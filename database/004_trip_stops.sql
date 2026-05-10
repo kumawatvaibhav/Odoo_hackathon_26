@@ -8,6 +8,7 @@ CREATE TABLE trip_stops (
     city_id         UUID            NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
     arrival_date    DATE,
     departure_date  DATE,
+    budget          NUMERIC(12,2),
     order_index     INTEGER         NOT NULL DEFAULT 0,       -- drag-and-drop ordering
     notes           TEXT,
     created_at      TIMESTAMPTZ     NOT NULL DEFAULT now(),
@@ -15,6 +16,8 @@ CREATE TABLE trip_stops (
 
     CONSTRAINT chk_trip_stops_dates
         CHECK (departure_date IS NULL OR arrival_date IS NULL OR departure_date >= arrival_date),
+    CONSTRAINT chk_trip_stops_budget_positive
+        CHECK (budget IS NULL OR budget >= 0),
     -- Prevent duplicate ordering within the same trip
     CONSTRAINT uq_trip_stops_order UNIQUE (trip_id, order_index)
 );

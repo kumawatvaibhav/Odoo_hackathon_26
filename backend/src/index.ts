@@ -7,6 +7,7 @@ import { testConnection, query } from "./config/database.js";
 import authRoutes from "./modules/auth/auth.routes.js";
 import communityRoutes from "./modules/community/community.routes.js";
 import adminRoutes from "./modules/admin/admin.routes.js";
+import tripsRoutes from "./modules/trips/trips.routes.js";
 import { errorHandler } from "./modules/auth/auth.controller.js";
 import { apiLimiter } from "./middleware/rateLimiter.middleware.js";
 
@@ -41,6 +42,7 @@ app.use("/api", apiLimiter);                             // General rate limitin
 app.use("/api/auth", authRoutes);
 app.use("/api/community", communityRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/trips", tripsRoutes);
 
 //  Health check
 app.get("/api/health", async (_req, res) => {
@@ -52,17 +54,7 @@ app.get("/api/health", async (_req, res) => {
   });
 });
 
-// ─── Quick test: list all cities ────────────────────────────────────
-app.get("/api/cities", async (_req, res) => {
-  try {
-    const result = await query(
-      "SELECT id, name, country, popularity_score FROM cities ORDER BY popularity_score DESC"
-    );
-    res.json({ count: result.rowCount, cities: result.rows });
-  } catch (err: any) {
-    res.status(500).json({ error: err.message });
-  }
-});
+// Cities are served via /api/trips/cities (see trips.routes.ts)
 
 // ─── Global Error Handler (must be last) ────────────────────────────
 app.use(errorHandler);
@@ -78,10 +70,11 @@ const start = async () => {
   app.listen(PORT, () => {
     console.log(`Traveloop API running at http://localhost:${PORT}`);
     console.log(`Health:  http://localhost:${PORT}/api/health`);
-    console.log(`Cities:  http://localhost:${PORT}/api/cities`);
+    console.log(`Cities:  http://localhost:${PORT}/api/trips/cities`);
     console.log(`Auth:    http://localhost:${PORT}/api/auth/*`);
     console.log(`Community: http://localhost:${PORT}/api/community`);
     console.log(`Admin:   http://localhost:${PORT}/api/admin/*`);
+    console.log(`Trips:   http://localhost:${PORT}/api/trips/*`);
   });
 };
 

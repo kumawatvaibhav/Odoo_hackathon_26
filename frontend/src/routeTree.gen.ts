@@ -10,16 +10,30 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
+import { Route as PlanTripRouteImport } from './routes/plan-trip'
+import { Route as MyTripsRouteImport } from './routes/my-trips'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as CommunityWriteRouteImport } from './routes/community-write'
 import { Route as CommunityRouteImport } from './routes/community'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as ActivitySearchRouteImport } from './routes/activity-search'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ItineraryTripIdRouteImport } from './routes/itinerary.$tripId'
+import { Route as TripTripIdStopStopIdRouteImport } from './routes/trip.$tripId.stop.$stopId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
   path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlanTripRoute = PlanTripRouteImport.update({
+  id: '/plan-trip',
+  path: '/plan-trip',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyTripsRoute = MyTripsRouteImport.update({
+  id: '/my-trips',
+  path: '/my-trips',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -52,6 +66,16 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ItineraryTripIdRoute = ItineraryTripIdRouteImport.update({
+  id: '/itinerary/$tripId',
+  path: '/itinerary/$tripId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TripTripIdStopStopIdRoute = TripTripIdStopStopIdRouteImport.update({
+  id: '/trip/$tripId/stop/$stopId',
+  path: '/trip/$tripId/stop/$stopId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -60,7 +84,11 @@ export interface FileRoutesByFullPath {
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
+  '/my-trips': typeof MyTripsRoute
+  '/plan-trip': typeof PlanTripRoute
   '/signup': typeof SignupRoute
+  '/itinerary/$tripId': typeof ItineraryTripIdRoute
+  '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -69,7 +97,11 @@ export interface FileRoutesByTo {
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
+  '/my-trips': typeof MyTripsRoute
+  '/plan-trip': typeof PlanTripRoute
   '/signup': typeof SignupRoute
+  '/itinerary/$tripId': typeof ItineraryTripIdRoute
+  '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -79,7 +111,11 @@ export interface FileRoutesById {
   '/community': typeof CommunityRoute
   '/community-write': typeof CommunityWriteRoute
   '/login': typeof LoginRoute
+  '/my-trips': typeof MyTripsRoute
+  '/plan-trip': typeof PlanTripRoute
   '/signup': typeof SignupRoute
+  '/itinerary/$tripId': typeof ItineraryTripIdRoute
+  '/trip/$tripId/stop/$stopId': typeof TripTripIdStopStopIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -90,7 +126,11 @@ export interface FileRouteTypes {
     | '/community'
     | '/community-write'
     | '/login'
+    | '/my-trips'
+    | '/plan-trip'
     | '/signup'
+    | '/itinerary/$tripId'
+    | '/trip/$tripId/stop/$stopId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -99,7 +139,11 @@ export interface FileRouteTypes {
     | '/community'
     | '/community-write'
     | '/login'
+    | '/my-trips'
+    | '/plan-trip'
     | '/signup'
+    | '/itinerary/$tripId'
+    | '/trip/$tripId/stop/$stopId'
   id:
     | '__root__'
     | '/'
@@ -108,7 +152,11 @@ export interface FileRouteTypes {
     | '/community'
     | '/community-write'
     | '/login'
+    | '/my-trips'
+    | '/plan-trip'
     | '/signup'
+    | '/itinerary/$tripId'
+    | '/trip/$tripId/stop/$stopId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -118,7 +166,11 @@ export interface RootRouteChildren {
   CommunityRoute: typeof CommunityRoute
   CommunityWriteRoute: typeof CommunityWriteRoute
   LoginRoute: typeof LoginRoute
+  MyTripsRoute: typeof MyTripsRoute
+  PlanTripRoute: typeof PlanTripRoute
   SignupRoute: typeof SignupRoute
+  ItineraryTripIdRoute: typeof ItineraryTripIdRoute
+  TripTripIdStopStopIdRoute: typeof TripTripIdStopStopIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -128,6 +180,20 @@ declare module '@tanstack/react-router' {
       path: '/signup'
       fullPath: '/signup'
       preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/plan-trip': {
+      id: '/plan-trip'
+      path: '/plan-trip'
+      fullPath: '/plan-trip'
+      preLoaderRoute: typeof PlanTripRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-trips': {
+      id: '/my-trips'
+      path: '/my-trips'
+      fullPath: '/my-trips'
+      preLoaderRoute: typeof MyTripsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -172,6 +238,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/itinerary/$tripId': {
+      id: '/itinerary/$tripId'
+      path: '/itinerary/$tripId'
+      fullPath: '/itinerary/$tripId'
+      preLoaderRoute: typeof ItineraryTripIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/trip/$tripId/stop/$stopId': {
+      id: '/trip/$tripId/stop/$stopId'
+      path: '/trip/$tripId/stop/$stopId'
+      fullPath: '/trip/$tripId/stop/$stopId'
+      preLoaderRoute: typeof TripTripIdStopStopIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -182,7 +262,11 @@ const rootRouteChildren: RootRouteChildren = {
   CommunityRoute: CommunityRoute,
   CommunityWriteRoute: CommunityWriteRoute,
   LoginRoute: LoginRoute,
+  MyTripsRoute: MyTripsRoute,
+  PlanTripRoute: PlanTripRoute,
   SignupRoute: SignupRoute,
+  ItineraryTripIdRoute: ItineraryTripIdRoute,
+  TripTripIdStopStopIdRoute: TripTripIdStopStopIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
