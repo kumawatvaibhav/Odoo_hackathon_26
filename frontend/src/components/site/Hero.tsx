@@ -1,22 +1,60 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Search, ArrowRight, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import gsap from "gsap";
+import banner from "@/assets/hero-banner.jpg";
+import lisbon from "@/assets/region-lisbon.jpg";
+import marrakesh from "@/assets/region-marrakesh.jpg";
+import reykjavik from "@/assets/region-reykjavik.jpg";
+import hanoi from "@/assets/region-hanoi.jpg";
+import kyoto from "@/assets/region-kyoto.jpg";
+import { fetchPexelsPhotos } from "@/lib/pexels";
 
 export function Hero() {
-  const slides = useMemo(
+  const fallbackSlides = useMemo(
     () => [
-      { name: "Himalayan Lake", art: <HimalayanLake /> },
-      { name: "Jaipur Courtyard", art: <JaipurCourtyard /> },
-      { name: "Kerala Backwaters", art: <KeralaBackwaters /> },
-      { name: "Santorini Cliffs", art: <SantoriniCliffs /> },
-      { name: "Kyoto Garden", art: <KyotoGarden /> },
+      {
+        src: banner,
+        alt: "Sunset over a winding coastal road above the Mediterranean",
+      },
+      { src: lisbon, alt: "Lisbon hillside and river light" },
+      { src: marrakesh, alt: "Marrakesh rooftops at dusk" },
+      { src: reykjavik, alt: "Reykjavik shoreline in soft light" },
+      { src: hanoi, alt: "Hanoi lantern streets" },
+      { src: kyoto, alt: "Kyoto garden pathways" },
     ],
     []
   );
+  const [slides, setSlides] = useState(fallbackSlides);
 
   const slideRefs = useRef<HTMLDivElement[]>([]);
   slideRefs.current = [];
+
+  useEffect(() => {
+    let active = true;
+
+    const loadSlides = async () => {
+      const [india, world] = await Promise.all([
+        fetchPexelsPhotos("India travel landscape", 3),
+        fetchPexelsPhotos("world travel landscape", 3),
+      ]);
+      const merged = [...india, ...world]
+        .map((photo) => ({
+          src: photo.src.large2x || photo.src.landscape,
+          alt: photo.alt || "Travel landscape",
+        }))
+        .slice(0, 5);
+      if (active && merged.length >= 5) {
+        setSlides(merged);
+      }
+    };
+
+    loadSlides();
+
+    return () => {
+      active = false;
+    };
+  }, [fallbackSlides]);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -42,7 +80,7 @@ export function Hero() {
     });
 
     return () => ctx.revert();
-  }, []);
+  }, [slides.length]);
 
   return (
     <section id="top" className="relative pt-20 pb-10">
@@ -51,7 +89,7 @@ export function Hero() {
           <div className="relative w-full h-[64vh] min-h-[460px] max-h-[720px]">
             {slides.map((slide, index) => (
               <div
-                key={slide.name}
+                key={`${slide.src}-${index}`}
                 ref={(node) => {
                   if (node) {
                     slideRefs.current[index] = node;
@@ -60,10 +98,12 @@ export function Hero() {
                 className="absolute inset-0"
                 aria-hidden={index !== 0}
               >
-                <div className="absolute inset-0" aria-hidden="true">
-                  {slide.art}
-                </div>
-                <span className="sr-only">{slide.name}</span>
+                <img
+                  src={slide.src}
+                  alt={slide.alt}
+                  className="h-full w-full object-cover"
+                  loading={index === 0 ? "eager" : "lazy"}
+                />
               </div>
             ))}
           </div>
@@ -186,118 +226,3 @@ function SearchBar() {
   );
 }
 
-function HimalayanLake() {
-  return (
-    <svg viewBox="0 0 1600 900" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="skyH" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#dfefff" />
-          <stop offset="60%" stopColor="#f6f3ea" />
-        </linearGradient>
-        <linearGradient id="lakeH" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#5aa6a5" />
-          <stop offset="100%" stopColor="#2f6f6f" />
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#skyH)" />
-      <path d="M0 520 L280 340 L520 520 L720 360 L980 520 L1200 300 L1600 520 V900 H0 Z" fill="#35404f" />
-      <path d="M0 600 L280 420 L520 600 L720 440 L980 600 L1200 380 L1600 600 V900 H0 Z" fill="#1f2c36" />
-      <rect y="600" width="1600" height="300" fill="url(#lakeH)" />
-      <path d="M260 640 C420 620, 620 660, 820 640" stroke="#b8ede7" strokeWidth="10" opacity="0.55" fill="none" />
-    </svg>
-  );
-}
-
-function JaipurCourtyard() {
-  return (
-    <svg viewBox="0 0 1600 900" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="skyJ" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#ffe4d6" />
-          <stop offset="100%" stopColor="#fff7eb" />
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#skyJ)" />
-      <rect y="440" width="1600" height="460" fill="#f4c8a5" />
-      <rect x="140" y="260" width="1320" height="440" rx="36" fill="#e49e73" />
-      <rect x="220" y="320" width="1160" height="320" rx="28" fill="#f2b892" />
-      <g fill="#ce7c50">
-        <rect x="300" y="360" width="220" height="220" rx="18" />
-        <rect x="580" y="360" width="220" height="220" rx="18" />
-        <rect x="860" y="360" width="220" height="220" rx="18" />
-        <rect x="1140" y="360" width="220" height="220" rx="18" />
-      </g>
-      <circle cx="1320" cy="200" r="70" fill="#f9c77c" />
-    </svg>
-  );
-}
-
-function KeralaBackwaters() {
-  return (
-    <svg viewBox="0 0 1600 900" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="skyK" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#cfe9f0" />
-          <stop offset="100%" stopColor="#f4f1ea" />
-        </linearGradient>
-        <linearGradient id="waterK" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stopColor="#4f9f9a" />
-          <stop offset="100%" stopColor="#3f7b78" />
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#skyK)" />
-      <rect y="520" width="1600" height="380" fill="url(#waterK)" />
-      <path d="M0 520 C260 460, 520 560, 820 520 C1140 480, 1340 560, 1600 520 V900 H0 Z" fill="#2d5b57" opacity="0.35" />
-      <g fill="#24463e">
-        <rect x="140" y="360" width="160" height="140" rx="20" />
-        <rect x="340" y="320" width="140" height="180" rx="20" />
-        <rect x="520" y="360" width="160" height="140" rx="20" />
-      </g>
-      <path d="M880 640 C1040 620, 1220 660, 1360 640" stroke="#d2f2ee" strokeWidth="10" opacity="0.6" fill="none" />
-    </svg>
-  );
-}
-
-function SantoriniCliffs() {
-  return (
-    <svg viewBox="0 0 1600 900" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="skyS" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#cfe1ff" />
-          <stop offset="100%" stopColor="#fff7f1" />
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#skyS)" />
-      <rect y="520" width="1600" height="380" fill="#2f5f7a" />
-      <path d="M0 540 L220 460 L420 520 L620 420 L820 520 L1040 420 L1200 520 L1600 460 V900 H0 Z" fill="#f0f3f5" />
-      <g fill="#ffffff">
-        <rect x="260" y="420" width="160" height="120" rx="16" />
-        <rect x="460" y="400" width="180" height="140" rx="16" />
-        <rect x="700" y="420" width="170" height="120" rx="16" />
-      </g>
-      <circle cx="1050" cy="330" r="60" fill="#78a6d8" />
-    </svg>
-  );
-}
-
-function KyotoGarden() {
-  return (
-    <svg viewBox="0 0 1600 900" className="h-full w-full" preserveAspectRatio="xMidYMid slice">
-      <defs>
-        <linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#d6efe4" />
-          <stop offset="100%" stopColor="#f6f1e5" />
-        </linearGradient>
-      </defs>
-      <rect width="1600" height="900" fill="url(#skyG)" />
-      <rect y="520" width="1600" height="380" fill="#aac8b5" />
-      <path d="M0 560 C220 500, 520 620, 840 560 C1160 520, 1380 620, 1600 560 V900 H0 Z" fill="#6b8f7a" />
-      <g fill="#3b4f43">
-        <rect x="180" y="360" width="220" height="160" rx="24" />
-        <rect x="470" y="330" width="200" height="190" rx="24" />
-        <rect x="740" y="360" width="240" height="160" rx="24" />
-      </g>
-      <circle cx="1260" cy="240" r="70" fill="#f2b6b8" />
-    </svg>
-  );
-}
