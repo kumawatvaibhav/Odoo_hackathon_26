@@ -120,7 +120,7 @@ export function Hero() {
               variants={{ hidden: { opacity: 0, y: 16 }, visible: { opacity: 1, y: 0 } }}
             >
               <motion.a
-                href="#signup"
+                href="/signup"
                 className="inline-flex items-center gap-2 rounded-xl bg-cream text-charcoal px-6 py-3.5 font-semibold shadow-card"
                 whileHover={{ y: -2, boxShadow: "0 12px 36px -16px color-mix(in oklab, var(--charcoal) 30%, transparent)" }}
                 whileTap={{ scale: 0.98 }}
